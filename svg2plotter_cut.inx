@@ -21,12 +21,12 @@
   </param>
 
   <param name="mirror" type="bool"
-         gui-text="⟺  Mirror mode  (vinyl applied from behind glass / window)">
+         gui-text="Mirror mode (vinyl applied from behind glass / window)">
     false
   </param>
 
   <param name="test_only" type="bool"
-         gui-text="▶  Test connection only  (do not cut)">
+         gui-text="Test connection only (do not cut)">
     false
   </param>
 

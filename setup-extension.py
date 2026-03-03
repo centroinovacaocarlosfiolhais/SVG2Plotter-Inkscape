@@ -21,13 +21,34 @@ import shutil
 
 EXTENSION_FILES = ["svg2plotter_cut.inx", "svg2plotter_cut.py"]
 
-INKSCAPE_EXT_DIRS = {
-    "linux":   os.path.expanduser("~/.config/inkscape/extensions/"),
-    "darwin":  os.path.expanduser(
-        "~/Library/Application Support/org.inkscape.Inkscape/"
-        "config/inkscape/extensions/"),
-    "windows": os.path.join(os.environ.get("APPDATA", ""), "inkscape", "extensions"),
-}
+def _find_inkscape_extensions_dir():
+    """
+    Returns the User Extensions path — checks real filesystem locations.
+    Handles apt/deb, Flatpak, Snap and Windows installer variants.
+    """
+    home = os.path.expanduser("~")
+    os_name = get_os()
+    candidates = []
+    if os_name == "linux":
+        candidates = [
+            os.path.join(home, ".config", "inkscape", "extensions"),
+            os.path.join(home, ".var", "app", "org.inkscape.Inkscape",
+                         "config", "inkscape", "extensions"),
+            os.path.join(home, "snap", "inkscape", "current",
+                         ".config", "inkscape", "extensions"),
+        ]
+    elif os_name == "darwin":
+        candidates = [
+            os.path.join(home, "Library", "Application Support",
+                         "org.inkscape.Inkscape", "config", "inkscape", "extensions"),
+        ]
+    elif os_name == "windows":
+        appdata = os.environ.get("APPDATA", "")
+        candidates = [os.path.join(appdata, "inkscape", "extensions")]
+    for path in candidates:
+        if os.path.isdir(path):
+            return path
+    return candidates[0] if candidates else None
 
 def banner():
     print()
@@ -144,8 +165,10 @@ def setup_permissions():
 def install_extension():
     step(4, 4, "Installing extension files into Inkscape...")
     os_name   = get_os()
-    ext_dir   = INKSCAPE_EXT_DIRS.get(os_name)
+    ext_dir   = _find_inkscape_extensions_dir()
     script_dir = os.path.dirname(os.path.abspath(__file__))
+    if ext_dir:
+        print(f"         → Detected: {ext_dir}")
 
     if not ext_dir:
         warn("Could not determine Inkscape extensions folder.")
