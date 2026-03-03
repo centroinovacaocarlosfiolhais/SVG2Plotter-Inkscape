@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<inkscape-extension xmlns="http://www.inkscape.org/namespace/inkscape/extension">
+
+  <name>Send to SVG2Plotter</name>
+  <id>org.cicf.svg2plotter.direct</id>
+
+  <dependency type="executable" location="inx">svg2plotter_cut.py</dependency>
+
+  <param name="port" type="string"
+         gui-text="Serial port"
+         gui-description="Port where the cutter is connected. Linux: /dev/ttyUSB0  Windows: COM5">
+    /dev/ttyUSB0
+  </param>
+
+  <param name="baud" type="optiongroup" appearance="combo"
+         gui-text="Baud rate">
+    <option value="9600">9600</option>
+    <option value="19200">19200</option>
+    <option value="4800">4800</option>
+    <option value="2400">2400</option>
+  </param>
+
+  <param name="mirror" type="bool"
+         gui-text="⟺  Mirror mode  (vinyl applied from behind glass / window)">
+    false
+  </param>
+
+  <param name="test_only" type="bool"
+         gui-text="▶  Test connection only  (do not cut)">
+    false
+  </param>
+
+  <effect needs-live-preview="false">
+    <object-type>all</object-type>
+    <effects-menu>
+      <submenu name="Export"/>
+    </effects-menu>
+  </effect>
+
+  <script>
+    <command location="inx" interpreter="python">svg2plotter_cut.py</command>
+  </script>
+
+</inkscape-extension>
